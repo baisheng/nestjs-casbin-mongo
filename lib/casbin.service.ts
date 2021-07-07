@@ -1,9 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {Effector, Enforcer, Filter, Watcher} from 'casbin';
-import { CASBIN_ENFORCER } from './nest-casbin.constants';
+import { CASBIN_ENFORCER } from './casbin.constants';
 
 @Injectable()
-export class NestCasbinService {
+export class CasbinService {
+
   constructor(@Inject(CASBIN_ENFORCER) public readonly enforcer: Enforcer) {}
 
   public async reloadPolicy() {
@@ -15,6 +16,10 @@ export class NestCasbinService {
     if (added) {
       await this.enforcer.savePolicy();
     }
+  }
+
+  public async savePolicy():Promise<boolean>{
+    return this.enforcer.savePolicy();
   }
 
   public async removePolicy(...params: string[]) {

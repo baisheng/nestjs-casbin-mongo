@@ -1,26 +1,37 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
     "module": "commonjs",
-    "noLib": false,
-    "skipLibCheck": true,
-    "lib": ["es2017", "esnext.asynciterable"],
-    "moduleResolution": "node",
-    "incremental": true,
+    "outDir": "./dist",
+    "baseUrl": "./lib",
+    "allowJs": false,
+    "sourceMap": true,
     "declaration": true,
-    "noImplicitAny": false,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
+    "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "downlevelIteration": true,
-    "strictNullChecks": false,
-    "jsx": "preserve",
-    "target": "es2017",
-    "strict": true,
-    "strictPropertyInitialization": false,
-    "newLine": "LF",
-    "resolveJsonModule": true,
-    "removeComments": false,
-    "sourceMap": true
+    "target": "es6",
+    "lib": [
+      "es2015",
+      "es2016",
+      "es2017",
+      "dom"
+    ]
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": ".",
+    "testRegex": ".spec.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ],
+    "testEnvironment": "node"
   }
 }

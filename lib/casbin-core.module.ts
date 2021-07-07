@@ -1,17 +1,17 @@
 import { DynamicModule, Module, Provider, Global, Type } from '@nestjs/common';
 import { newEnforcer } from 'casbin';
 import { v4 as uuid } from 'uuid';
-import { NestCasbinService } from './nest-casbin.service';
+import { CasbinService } from './casbin.service';
 import {
   CASBIN_ENFORCER,
   NEST_CASBIN_MODULE_ID,
   NEST_CASBIN_OPTION
-} from './nest-casbin.constants';
+} from './casbin.constants';
 
 import {
   NestCasbinModuleAsyncOptions,
   NestCasbinModuleOptions, NestCasbinOptionsFactory
-} from './interfaces/nest-casbin.interface';
+} from './interfaces';
 import { MongoAdapter } from 'casbin-mongodb-adapter';
 
 
@@ -19,10 +19,10 @@ export const generateString = () => uuid();
 
 @Global()
 @Module({
-  providers: [NestCasbinService],
-  exports: [NestCasbinService],
+  providers: [CasbinService],
+  exports: [CasbinService],
 })
-export class NestCasbinCoreModule {
+export class CasbinCoreModule {
 
   public static forRoot(options: NestCasbinModuleOptions) {
       const casbinEnforcerProvider: Provider = {
@@ -41,9 +41,9 @@ export class NestCasbinCoreModule {
         },
       };
       return {
-        exports: [casbinEnforcerProvider, NestCasbinService],
-        module: NestCasbinCoreModule,
-        providers: [casbinEnforcerProvider, NestCasbinService],
+        exports: [casbinEnforcerProvider, CasbinService],
+        module: CasbinCoreModule,
+        providers: [casbinEnforcerProvider, CasbinService],
       };
   }
   static forRootAsync(options: NestCasbinModuleAsyncOptions) {
@@ -64,69 +64,20 @@ export class NestCasbinCoreModule {
     };
     const asyncProviders = this.createAsyncProviders(options);
     return {
-      module: NestCasbinCoreModule,
+      module: CasbinCoreModule,
       imports: options.imports,
       providers: [
         ...asyncProviders,
         casbinEnforcerProvider,
-        NestCasbinService,
+        CasbinService,
         {
           provide: NEST_CASBIN_MODULE_ID,
           useValue: generateString(),
         },
       ],
-      exports: [casbinEnforcerProvider, NestCasbinService],
+      exports: [casbinEnforcerProvider, CasbinService],
     };
   }
-  // public static register(options: NestCasbinModuleOptions): DynamicModule {
-  //   const casbinEnforcerProvider: Provider = {
-  //     provide: CASBIN_ENFORCER,
-  //     useFactory: async () => {
-  //       const adapter = await MongoAdapter.newAdapter({
-  //         uri: options.uri,
-  //         collectionName: options.collectionName || 'casbin',
-  //         databaseName: options.databaseName || 'node-casbin-official',
-  //         option: options.clientOptions,
-  //       });
-  //       const enforcer = await newEnforcer(options.model, options.adapter);
-  //       await enforcer.loadPolicy();
-  //       return enforcer;
-  //     },
-  //   };
-  //   return {
-  //     exports: [casbinEnforcerProvider, NestCasbinService],
-  //     module: NestCasbinCoreModule,
-  //     providers: [casbinEnforcerProvider, NestCasbinService],
-  //   };
-  // }
-
-  // public static registerAsync(options: NestCasbinModuleAsyncOptions): DynamicModule {
-  //   const casbinEnforcerProvider: Provider = {
-  //     provide: CASBIN_ENFORCER,
-  //     useFactory: async (casbinOptions: NestCasbinModuleOptions) => {
-  //       const enforcer = await newEnforcer(casbinOptions.model, casbinOptions.adapter);
-  //       await enforcer.loadPolicy();
-  //       return enforcer;
-  //     },
-  //     inject: [NEST_CASBIN_OPTION],
-  //   };
-  //
-  //   const asyncProviders = this.createAsyncProviders(options);
-  //   return {
-  //     module: NestCasbinCoreModule,
-  //     imports: options.imports,
-  //     providers: [
-  //       ...asyncProviders,
-  //       casbinEnforcerProvider,
-  //       NestCasbinService,
-  //       {
-  //         provide: NEST_CASBIN_MODULE_ID,
-  //         useValue: generateString(),
-  //       },
-  //     ],
-  //     exports: [casbinEnforcerProvider, NestCasbinService],
-  //   };
-  // }
 
   private static createAsyncProviders(
     options: NestCasbinModuleAsyncOptions,
